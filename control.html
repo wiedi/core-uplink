@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Uplink</title>
+	<style>
+	body {
+		font-family: sans-serif;
+		background-color: #ccc;
+		margin: 0;
+		padding: 0;
+	}
+	h1 {
+		background-color: #333;
+		color: #fff;
+		margin: 0;
+		padding: 0.3em;
+		padding-left: 1em;
+	}
+	#content {
+		padding-left: 2em;
+		padding-top: 2em;
+	}
+	span {
+		font-family: monospace;
+	}
+	</style>
+	<script src="/socket.io/socket.io.js"></script>
+	<script>
+	var socket = io.connect()
+	socket.on('updateConnections', function(data) {
+		document.getElementById('connections').textContent = data
+	})
+	socket.on('identity', function(data) {
+		document.getElementById('identity').textContent = data
+	})
+	function generateIdentity() {
+		socket.emit('newIdentity')
+	}
+	</script>
+</head>
+<body>
+	<h1>Uplink</h1>
+	<div id="content">
+		Identity: <span id="identity">(none)</span>
+			<button id="generateIdentity" onclick="generateIdentity()">New</button><br>
+		Connections: <span id="connections">0</span>
+	</div>
+</body>
+</html>
