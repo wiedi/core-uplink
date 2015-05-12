@@ -71,7 +71,7 @@ function ControlInterface(server, identityFile, port) {
 
 	self.io.on('connection', function(socket) {
 		socket.emit('identity', self.identity)
-		socket.emit('updateConnections', count)
+		socket.emit('updateConnections', self.uplink.connections)
 		socket.on('newIdentity', function() {
 			self.identity = uuid.v4()
 			self.uplink.setIdentity(self.identity)
