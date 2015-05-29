@@ -17,7 +17,7 @@ if(program.args.length < 2) {
 }
 
 var uplink = new UplinkClient(program.server || 'http://localhost:8080')
-uplink.createTunnel(program.port || '0', program.args[1], program.args[2], function(err, s) {
+uplink.createTunnel(program.port || '0', program.args[0], program.args[1], function(err, s) {
 	if(err) {
 		console.error(err)
 		process.exit(2)
