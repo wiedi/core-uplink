@@ -14,9 +14,13 @@ program
 
 server.listen(program.port || process.env.UPLINKSRV_PORT || '8080')
 
+app.get('/', function(req, res){
+  res.json({'status': 'OK'})
+})
+
 app.get('/sats', function(req, res){
   res.json(Object.keys(sats))
-});
+})
 
 
 var sats = {}
