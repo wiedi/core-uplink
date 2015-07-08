@@ -14,6 +14,10 @@ program
 
 server.listen(program.port || process.env.UPLINKSRV_PORT || '8080')
 
+app.get('/sats', function(req, res){
+  res.json(Object.keys(sats))
+});
+
 
 var sats = {}
 io.on('connection', function (socket) {
