@@ -26,7 +26,7 @@ UplinkClient.prototype.createTunnel = function(src_port, dst_uuid, dst_port, cb)
 	s.on('error', function(err) {
 		cb(err)
 	})
-	s.listen(src_port, function() {
+	s.listen(src_port, '127.0.0.1', function() {
 		cb(null, s.address())
 	})
 	return s

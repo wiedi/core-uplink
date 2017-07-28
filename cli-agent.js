@@ -43,4 +43,4 @@ app.post('/tunnel/:target/:port/', function(req, res) {
 })
 
 var uplink = new UplinkClient(program.server || 'http://localhost:8080')
-app.listen(program.port || '8000')
+app.listen(program.port || '8000', '127.0.0.1')
