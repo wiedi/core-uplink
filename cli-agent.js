@@ -13,7 +13,6 @@ program
 	.option('-t, --timeout <time>', 'time in seconds before a tunnel gets removed [1800]')
 	.parse(process.argv)
 
-var tunnels = {}
 var timeout = (program.timeout ? program.timeout * 1000 : 1000 * 60 * 30)
 
 app.use(bodyParser.json())
@@ -32,13 +31,8 @@ app.post('/tunnel/:target/:port/', function(req, res) {
 		}
 		res.json({"status": "success", "port": s.port})
 	})
-	var key = dst_uuid + ':' + dst_port
-	if(key in tunnels) {
-		clearTimeout(tunnels[key])
-	}
-	tunnels[key] = setTimeout(function() {
+	setTimeout(function() {
 		sock.close()
-		delete tunnels[key]
 	}, timeout)
 })
 
