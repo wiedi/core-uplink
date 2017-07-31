@@ -8,18 +8,24 @@ var iostream = require('socket.io-stream')
 var program  = require('commander')
 
 program
-	.usage('[-p <port>]')
+	.usage('[-p <port>] [-k <key>]')
 	.option('-p, --port <port>', 'port [8080]')
+	.option('-k, --key <key>', 'key')
 	.parse(process.argv)
 
 server.listen(program.port || process.env.UPLINKSRV_PORT || '8080')
+var secret = program.key || process.env.UPLINKSRV_KEY
 
 app.get('/', function(req, res){
-  res.json({'status': 'OK'})
+	res.json({'status': 'OK'})
 })
 
-app.get('/sats', function(req, res){
-  res.json(Object.keys(sats))
+app.get('/:secret/sats', function(req, res){
+	if(req.params.secret != secret) {
+		res.status(404).json({"error": "not found"})
+		return
+	}
+	res.json(Object.keys(sats))
 })
 
 
@@ -30,6 +36,7 @@ function is_online(uuid) {
 }
 
 io.on('connection', function (socket) {
+	var loggedin = false
 	var authed = false
 	var uuid   = undefined
 	socket.on('auth', function(cuuid) {
@@ -48,11 +55,25 @@ io.on('connection', function (socket) {
 	})
 
 	socket.on('ping', function(cuuid) {
+		if(!loggedin) {
+			socket.emit('pong', false)
+			return
+		}
 		socket.emit('pong', is_online(cuuid))
 	})
 
+	socket.on('qlogin', function(csecret) {
+		if(csecret == secret) {
+			loggedin = true
+		}
+		socket.emit('rlogin', loggedin)
+	})
 
 	iostream(socket).on('tunnel', function(stream, target, port) {
+		if(!loggedin) {
+			stream.end()
+			return
+		}
 		if(!is_online(target)) {
 			stream.end()
 			return

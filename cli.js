@@ -9,7 +9,7 @@ function UplinkClient(server) {
 	this.sock   = io.connect(this.server)
 }
 
-UplinkClient.prototype.createTunnel = function(src_port, dst_uuid, dst_port, cb) {
+UplinkClient.prototype.createTunnel = function(src_port, dst_uuid, dst_port, secret, cb) {
 	var self = this
 	var cb_returned = false
 	var s = net.createServer(function(client) {
@@ -47,12 +47,25 @@ UplinkClient.prototype.createTunnel = function(src_port, dst_uuid, dst_port, cb)
 			}
 		})
 	})
-	self.sock.emit('ping', dst_uuid)
+
+	self.sock.on('rlogin', function(loggedin) {
+		if(!loggedin) {
+			if(!cb_returned) {
+				cb("Login error")
+				cb_returned = true
+			}
+			return
+		}
+		self.sock.emit('ping', dst_uuid)
+	})
+
+	self.sock.emit('qlogin', secret)
 
 	setTimeout(function() {
-		s.close()
 		if(!cb_returned) {
-			cb("Uplink Server pong-timeout")
+			s.close()
+			self.sock.close()
+			cb("Uplink Server timeout")
 			cb_returned = true
 		}
 	}, 1000 * 5)
