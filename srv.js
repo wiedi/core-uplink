@@ -24,6 +24,11 @@ app.get('/sats', function(req, res){
 
 
 var sats = {}
+
+function is_online(uuid) {
+	return !(Object.keys(sats).indexOf(uuid) < 0)
+}
+
 io.on('connection', function (socket) {
 	var authed = false
 	var uuid   = undefined
@@ -41,9 +46,14 @@ io.on('connection', function (socket) {
 			delete sats[uuid]
 		}
 	})
-	
+
+	socket.on('ping', function(cuuid) {
+		socket.emit('pong', is_online(cuuid))
+	})
+
+
 	iostream(socket).on('tunnel', function(stream, target, port) {
-		if(!(target in sats)) {
+		if(!is_online(target)) {
 			stream.end()
 			return
 		}

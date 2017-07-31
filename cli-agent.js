@@ -26,7 +26,7 @@ app.post('/tunnel/:target/:port/', function(req, res) {
 	var dst_port = req.params.port
 	var sock = uplink.createTunnel('0', dst_uuid, dst_port, function(err, s) {
 		if(err) {
-			res.status(500).json({"status": "error"})
+			res.status(500).json({"status": "error", "error": String(err)})
 			return
 		}
 		res.json({"status": "success", "port": s.port})

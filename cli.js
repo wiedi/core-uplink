@@ -11,6 +11,7 @@ function UplinkClient(server) {
 
 UplinkClient.prototype.createTunnel = function(src_port, dst_uuid, dst_port, cb) {
 	var self = this
+	var cb_returned = false
 	var s = net.createServer(function(client) {
 		var stream = iostream.createStream()
 		iostream(self.sock).emit('tunnel', stream, dst_uuid, dst_port)
@@ -23,12 +24,39 @@ UplinkClient.prototype.createTunnel = function(src_port, dst_uuid, dst_port, cb)
 			client.end()
 		})
 	})
-	s.on('error', function(err) {
-		cb(err)
+
+	self.sock.on('pong', function(online) {
+		if(!online) {
+			if(!cb_returned) {
+				cb("Client Uplink offline")
+				cb_returned = true
+			}
+			return
+		}
+		s.on('error', function(err) {
+			if(!cb_returned) {
+				cb(err)
+				cb_returned = true
+			}
+		})
+
+		s.listen(src_port, '127.0.0.1', function() {
+			if(!cb_returned) {
+				cb(null, s.address())
+				cb_returned = true
+			}
+		})
 	})
-	s.listen(src_port, '127.0.0.1', function() {
-		cb(null, s.address())
-	})
+	self.sock.emit('ping', dst_uuid)
+
+	setTimeout(function() {
+		s.close()
+		if(!cb_returned) {
+			cb("Uplink Server pong-timeout")
+			cb_returned = true
+		}
+	}, 1000 * 5)
+
 	return s
 }
 
