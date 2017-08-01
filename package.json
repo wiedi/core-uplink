@@ -1,6 +1,6 @@
 {
 	"name": "core-uplink",
-	"version": "0.0.5",
+	"version": "0.0.6",
 	"description": "proxy over websockets",
 	"author":      "Sebastian Wiedenroth <wiedi@frubar.net>",
 	"licenses": [
