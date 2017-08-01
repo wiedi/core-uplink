@@ -13,7 +13,7 @@ program
 	.option('-k, --key <key>', 'key')
 	.parse(process.argv)
 
-server.listen(program.port || process.env.UPLINKSRV_PORT || '8080')
+server.listen(program.port || process.env.UPLINKSRV_PORT || '8080', '127.0.0.1')
 var secret = program.key || process.env.UPLINKSRV_KEY
 
 app.get('/', function(req, res){
