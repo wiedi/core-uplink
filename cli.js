@@ -25,6 +25,13 @@ UplinkClient.prototype.createTunnel = function(src_port, dst_uuid, dst_port, sec
 		})
 	})
 
+	s.on('error', function(err) {
+		if(!cb_returned) {
+			cb(err)
+			cb_returned = true
+		}
+	})
+
 	self.sock.on('pong', function(online) {
 		if(!online) {
 			if(!cb_returned) {
@@ -33,12 +40,6 @@ UplinkClient.prototype.createTunnel = function(src_port, dst_uuid, dst_port, sec
 			}
 			return
 		}
-		s.on('error', function(err) {
-			if(!cb_returned) {
-				cb(err)
-				cb_returned = true
-			}
-		})
 
 		s.listen(src_port, '127.0.0.1', function() {
 			if(!cb_returned) {
