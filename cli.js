@@ -6,7 +6,7 @@ var iostream = require('socket.io-stream')
 
 function UplinkClient(server) {
 	this.server = server || 'http://localhost:8080'
-	this.sock   = io.connect(this.server)
+	this.sock   = io.connect(this.server, {'forceNew': true })
 }
 
 UplinkClient.prototype.createTunnel = function(src_port, dst_uuid, dst_port, secret, cb) {
