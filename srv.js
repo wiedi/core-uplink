@@ -54,12 +54,12 @@ io.on('connection', function (socket) {
 		}
 	})
 
-	socket.on('ping', function(cuuid) {
+	socket.on('uping', function(cuuid) {
 		if(!loggedin) {
-			socket.emit('pong', false)
+			socket.emit('upong', false)
 			return
 		}
-		socket.emit('pong', is_online(cuuid))
+		socket.emit('upong', is_online(cuuid))
 	})
 
 	socket.on('qlogin', function(csecret) {

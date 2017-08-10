@@ -32,7 +32,7 @@ UplinkClient.prototype.createTunnel = function(src_port, dst_uuid, dst_port, sec
 		}
 	})
 
-	self.sock.on('pong', function(online) {
+	self.sock.on('upong', function(online) {
 		if(!online) {
 			if(!cb_returned) {
 				cb("Client Uplink offline")
@@ -57,7 +57,7 @@ UplinkClient.prototype.createTunnel = function(src_port, dst_uuid, dst_port, sec
 			}
 			return
 		}
-		self.sock.emit('ping', dst_uuid)
+		self.sock.emit('uping', dst_uuid)
 	})
 
 	self.sock.emit('qlogin', secret)
