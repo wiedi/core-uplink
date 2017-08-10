@@ -25,6 +25,8 @@ app.get('/', function (req, res) {
 app.post('/tunnel/:target/:port/', function(req, res) {
 	var dst_uuid = req.params.target
 	var dst_port = req.params.port
+	var uplink = new UplinkClient(program.server || 'http://localhost:8080')
+
 	var sock = uplink.createTunnel('0', dst_uuid, dst_port, secret, function(err, s) {
 		if(err) {
 			res.status(500).json({"status": "error", "error": String(err)})
@@ -37,5 +39,4 @@ app.post('/tunnel/:target/:port/', function(req, res) {
 	}, timeout)
 })
 
-var uplink = new UplinkClient(program.server || 'http://localhost:8080')
 app.listen(program.port || '8000', '127.0.0.1')
