@@ -36,6 +36,7 @@ app.post('/tunnel/:target/:port/', function(req, res) {
 	})
 	setTimeout(function() {
 		sock.close()
+		uplink.sock.close()
 	}, timeout)
 })
 
